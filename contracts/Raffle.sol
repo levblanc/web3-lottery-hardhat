@@ -13,7 +13,13 @@ import '@chainlink/contracts/src/v0.8/KeeperCompatible.sol';
 error Raffle__NotEnoughETHEntered();
 error Raffle__TransferFailed();
 error Raffle__NotOpen();
+error Raffle__UpkeepNotNeeded(uint256 currentBalance, uint256 numOfPlayers, uint256 raffleState);
 
+/** @title A Raffle Contrace
+ * @author Levblanc
+ * @notice This contract is for creating an untamperable decentralized smart contract
+ * @dev This implements Chainlink VRF v2 and Chainlink Keepers
+ */
 contract Raffle is VRFConsumerBaseV2, KeeperCompatibleInterface {
     /* Type declarations */
     enum RaffleState {
@@ -42,6 +48,7 @@ contract Raffle is VRFConsumerBaseV2, KeeperCompatibleInterface {
     event RequestedRaffleWinner(uint256 indexed requestId);
     event WinnerPicked(address indexed winner);
 
+    /* Functions */
     constructor(
         address vrfCoordinatorV2,
         uint256 entranceFee,
@@ -86,9 +93,9 @@ contract Raffle is VRFConsumerBaseV2, KeeperCompatibleInterface {
      * 4. The lottery should be in "open" state
      */
     function checkUpkeep(
-        bytes calldata /* checkdata */
+        bytes memory /* checkdata */
     )
-        external
+        public
         override
         returns (
             bool upkeepNeeded,
@@ -108,7 +115,23 @@ contract Raffle is VRFConsumerBaseV2, KeeperCompatibleInterface {
     // Randomness in Chainlink VRF v2: 2 transaction process
     // 1. Request the random number
     // 2. Get the random word and do sth with it
-    function requestRandomWinner() external {
+
+    // Rename `requestRandomWinner` to `performUpkeep`
+    // Since once `checkUpkeep` returns true
+    // the Chainlink nodes will automatically called `performUpkeep`
+    function performUpkeep(
+        bytes calldata /* performData */
+    ) external override {
+        (bool upkeepNeeded, ) = checkUpkeep('');
+
+        if (!upkeepNeeded) {
+            revert Raffle__UpkeepNotNeeded(
+                address(this).balance,
+                s_players.length,
+                uint256(s_raffleState)
+            );
+        }
+
         s_raffleState = RaffleState.CALCULATING;
 
         uint256 requestId = i_vrfCoordinator.requestRandomWords(
@@ -136,6 +159,9 @@ contract Raffle is VRFConsumerBaseV2, KeeperCompatibleInterface {
         // Reset players array
         s_players = new address payable[](0);
 
+        // Reset timestamp
+        s_lastTimeStamp = block.timestamp;
+
         // Send funds to winner
         (bool success, ) = s_recentWinner.call{value: address(this).balance}('');
 
@@ -157,5 +183,25 @@ contract Raffle is VRFConsumerBaseV2, KeeperCompatibleInterface {
 
     function getRecentWinner() public view returns (address) {
         return s_recentWinner;
+    }
+
+    function getRaffleState() public view returns (RaffleState) {
+        return s_raffleState;
+    }
+
+    function getNumOfWords() public pure returns (uint256) {
+        return NUM_OF_WORDS;
+    }
+
+    function getNumOfPlayers() public view returns (uint256) {
+        return s_players.length;
+    }
+
+    function getLatestTimestamp() public view returns (uint256) {
+        return s_lastTimeStamp;
+    }
+
+    function getRequestConfirmations() public pure returns (uint256) {
+        return REQUEST_CONFIRMATIONS;
     }
 }
