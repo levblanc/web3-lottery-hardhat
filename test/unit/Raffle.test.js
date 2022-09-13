@@ -208,16 +208,19 @@ const {
                 assert.equal(raffleState.toString(), '0');
                 assert(endingTimestamp > startingTimestamp);
 
-                const winnerCurrentBalance = (
-                  await accounts[0].getBalance()
-                ).toString();
+                const winnerEndingBalance = await accounts[0].getBalance();
 
-                console.log('winnerCurrentBalance ', winnerCurrentBalance);
-                console.log('winnerEndingBalance  ', winnerEndingBalance);
-
-                // assert.equal(winnerCurrentBalance, winnerEndingBalance);
+                assert(
+                  winnerEndingBalance.toString(),
+                  winnerStartingBalance
+                    // entrance fee for other players
+                    .add(raffleEntranceFee.mul(additionalEntrants))
+                    // entrance fee for winning player
+                    .add(raffleEntranceFee)
+                    .toString()
+                );
               } catch (error) {
-                reject();
+                reject(error);
               }
 
               resolve();
@@ -227,11 +230,6 @@ const {
             const txReceipt = await tx.wait(1);
 
             const winnerStartingBalance = await accounts[0].getBalance();
-            const winnerEndingBalance = winnerStartingBalance
-              .add(
-                raffleEntranceFee.mul(additionalEntrants).add(raffleEntranceFee)
-              )
-              .toString();
 
             await vrfCoordinatorV2Mock.fulfillRandomWords(
               txReceipt.events[1].args.requestId,
