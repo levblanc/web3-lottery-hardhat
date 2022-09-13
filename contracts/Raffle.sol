@@ -13,7 +13,11 @@ import '@chainlink/contracts/src/v0.8/KeeperCompatible.sol';
 error Raffle__NotEnoughETHEntered();
 error Raffle__TransferFailed();
 error Raffle__NotOpen();
-error Raffle__UpkeepNotNeeded(uint256 currentBalance, uint256 numOfPlayers, uint256 raffleState);
+error Raffle__UpkeepNotNeeded(
+    uint256 currentBalance,
+    uint256 numOfPlayers,
+    uint256 raffleState
+);
 
 /** @title A Raffle Contrace
  * @author Levblanc
@@ -99,7 +103,7 @@ contract Raffle is VRFConsumerBaseV2, KeeperCompatibleInterface {
         override
         returns (
             bool upkeepNeeded,
-            bytes memory /*performData*/
+            bytes memory /* performData */
         )
     {
         bool isOpen = (RaffleState.OPEN == s_raffleState);
@@ -163,7 +167,9 @@ contract Raffle is VRFConsumerBaseV2, KeeperCompatibleInterface {
         s_lastTimeStamp = block.timestamp;
 
         // Send funds to winner
-        (bool success, ) = s_recentWinner.call{value: address(this).balance}('');
+        (bool success, ) = s_recentWinner.call{value: address(this).balance}(
+            ''
+        );
 
         if (!success) {
             revert Raffle__TransferFailed();
@@ -203,5 +209,9 @@ contract Raffle is VRFConsumerBaseV2, KeeperCompatibleInterface {
 
     function getRequestConfirmations() public pure returns (uint256) {
         return REQUEST_CONFIRMATIONS;
+    }
+
+    function getInterval() public view returns (uint256) {
+        return i_interval;
     }
 }
