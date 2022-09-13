@@ -51,4 +51,14 @@ module.exports = {
       },
     ],
   },
+  gasReporter: {
+    enabled: false, // set to true when needs a report
+    outputFile: 'gas-report.md',
+    noColors: true,
+    // currency: 'USD',
+    token: 'MATIC',
+  },
+  mocha: {
+    timeout: 200000, // ms
+  },
 };
