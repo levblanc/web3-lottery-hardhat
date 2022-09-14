@@ -3,7 +3,8 @@ require('hardhat-deploy');
 require('hardhat-contract-sizer');
 require('dotenv').config();
 
-const { RINKEBY_RPC_URL, PRIVATE_KEY, ETHERSCAN_API_KEY } = process.env;
+const { RINKEBY_RPC_URL, GOERLI_RPC_URL, PRIVATE_KEY, ETHERSCAN_API_KEY } =
+  process.env;
 
 /** @type import('hardhat/config').HardhatUserConfig */
 module.exports = {
@@ -22,6 +23,12 @@ module.exports = {
       url: RINKEBY_RPC_URL,
       accounts: [PRIVATE_KEY],
     },
+    goerli: {
+      chainId: 5,
+      blockConfirmations: 6,
+      url: GOERLI_RPC_URL,
+      accounts: [PRIVATE_KEY],
+    },
     // localhost: {
     //   chainId: 31137,
     //   url: 'http://127.0.0.1:8545'
@@ -36,10 +43,7 @@ module.exports = {
     },
   },
   etherscan: {
-    // apiKey: ETHERSCAN_API_KEY,
-    apiKey: {
-      rinkeby: ETHERSCAN_API_KEY,
-    },
+    apiKey: ETHERSCAN_API_KEY,
     customChains: [
       {
         network: 'rinkeby',
@@ -47,6 +51,14 @@ module.exports = {
         urls: {
           apiURL: 'http://api-rinkeby.etherscan.io/api',
           browserURL: 'https://rinkeby.etherscan.io',
+        },
+      },
+      {
+        network: 'goerli',
+        chainId: 5,
+        urls: {
+          apiURL: 'http://api-goerli.etherscan.io/api',
+          browserURL: 'https://goerli.etherscan.io',
         },
       },
     ],
@@ -59,6 +71,6 @@ module.exports = {
     token: 'MATIC',
   },
   mocha: {
-    timeout: 200000, // ms
+    timeout: 2000000, // ms
   },
 };
