@@ -194,7 +194,7 @@ const {
 
               try {
                 const recentWinner = await raffle.getRecentWinner();
-                console.log('>>>>>> Winner is', recentWinner);
+                console.log('>>>>>> Winner is: ', recentWinner);
                 console.log('>>>>>> accounts[0]', accounts[0].address);
                 console.log('>>>>>> accounts[1]', accounts[1].address);
                 console.log('>>>>>> accounts[2]', accounts[2].address);
@@ -219,11 +219,11 @@ const {
                     .add(raffleEntranceFee)
                     .toString()
                 );
+
+                resolve();
               } catch (error) {
                 reject(error);
               }
-
-              resolve();
             });
 
             const tx = await raffle.performUpkeep([]);
