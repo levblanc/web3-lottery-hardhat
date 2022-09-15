@@ -1,14 +1,17 @@
-const { assert, expect } = require('chai');
-const { getNamedAccounts, deployments, ethers, network } = require('hardhat');
-const {
-  developmentChains,
-  networkConfig,
-} = require('../../helper-hardhat-config');
+import { assert, expect } from 'chai';
+import { getNamedAccounts, deployments, ethers, network } from 'hardhat';
+import { developmentChains, networkConfig } from '../../helper-hardhat-config';
+import { Raffle, VRFCoordinatorV2Mock } from '../../typechain-types';
+import { BigNumber } from 'ethers';
 
 !developmentChains.includes(network.name)
   ? describe.skip
   : describe('Raffle Unit Tests', () => {
-      let deployer, raffle, vrfCoordinatorV2Mock, raffleEntranceFee, interval;
+      let deployer: string,
+        raffle: Raffle,
+        vrfCoordinatorV2Mock: VRFCoordinatorV2Mock,
+        raffleEntranceFee: BigNumber,
+        interval: BigNumber;
       const { chainId } = network.config;
 
       beforeEach(async () => {
@@ -31,7 +34,7 @@ const {
           const raffleState = await raffle.getRaffleState();
 
           assert.equal(raffleState.toString(), '0');
-          assert.equal(interval.toString(), networkConfig[chainId].interval);
+          assert.equal(interval.toString(), networkConfig[chainId!].interval);
         });
       });
 
@@ -147,7 +150,7 @@ const {
 
           const txResponse = await raffle.performUpkeep([]);
           const txReceipt = await txResponse.wait(1);
-          const { requestId } = txReceipt.events[1].args;
+          const { requestId } = txReceipt!.events![1].args!;
           const raffleState = await raffle.getRaffleState();
 
           assert(requestId.toNumber() > 0);
@@ -220,7 +223,7 @@ const {
                     .toString()
                 );
 
-                resolve();
+                resolve('Success!');
               } catch (error) {
                 reject(error);
               }
@@ -232,7 +235,7 @@ const {
             const winnerStartingBalance = await accounts[0].getBalance();
 
             await vrfCoordinatorV2Mock.fulfillRandomWords(
-              txReceipt.events[1].args.requestId,
+              txReceipt!.events![1].args!.requestId,
               raffle.address
             );
           });
