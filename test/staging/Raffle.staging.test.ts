@@ -1,14 +1,16 @@
-const { assert, expect } = require('chai');
-const { getNamedAccounts, deployments, ethers, network } = require('hardhat');
-const {
-  developmentChains,
-  networkConfig,
-} = require('../../helper-hardhat-config');
+import { assert, expect } from 'chai';
+import { getNamedAccounts, ethers, network } from 'hardhat';
+import { developmentChains } from '../../helper-hardhat-config';
+import { Raffle } from '../../typechain-types';
+import { BigNumber } from 'ethers';
 
 developmentChains.includes(network.name)
   ? describe.skip
   : describe('Raffle Staging Tests', () => {
-      let deployer, raffle, raffleEntranceFee, winnerStartingBalance;
+      let deployer: string,
+        raffle: Raffle,
+        raffleEntranceFee: BigNumber,
+        winnerStartingBalance: BigNumber;
 
       beforeEach(async () => {
         deployer = (await getNamedAccounts()).deployer;
@@ -50,7 +52,7 @@ developmentChains.includes(network.name)
                 // check timestamp
                 assert(endingTimestamp > startingTimestamp);
 
-                resolve();
+                resolve('Success');
               } catch (error) {
                 reject(error);
               }
