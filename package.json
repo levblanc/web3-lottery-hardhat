@@ -2,6 +2,8 @@
   "name": "web3-lottery-hardhat",
   "version": "1.0.0",
   "scripts": {
+    "deploy": "yarn hardhat deploy",
+    "deploy:goerli": "yarn hardhat deploy --network goerli",
     "test": "yarn hardhat test",
     "test:staging": "yarn hardhat test --network goerli",
     "lint": "yarn solhint 'contract/*.sol'",
