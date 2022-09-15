@@ -1,6 +1,20 @@
 const { ethers } = require('hardhat');
 
-const networkConfig = {
+export interface networkConfigItem {
+  name: string,
+  subscriptionId?: string,
+  gasLane?: string,
+  interval?: string,
+  entranceFee: string,
+  callbackGasLimit?: string,
+  vrfCoordinatorV2?: string
+}
+
+export interface networkConfigInfo {
+  [key: number]: networkConfigItem
+}
+
+export const networkConfig: networkConfigInfo = {
   4: {
     name: 'rinkeby',
     vrfCoordinatorV2: '0x6168499c0cFfCaCD319c818142124B7A15E857ab',
@@ -35,9 +49,6 @@ const networkConfig = {
   },
 };
 
-const developmentChains = ['hardhat', 'localhost'];
+export const developmentChains = ['hardhat', 'localhost'];
+export const WAIT_BLOCK_CONFIRMATIONS = 6;
 
-module.exports = {
-  networkConfig,
-  developmentChains,
-};

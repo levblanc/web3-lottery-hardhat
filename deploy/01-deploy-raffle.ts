@@ -1,19 +1,25 @@
-const { network, ethers } = require('hardhat');
-const {
+import { network, ethers } from 'hardhat';
+import { DeployFunction } from 'hardhat-deploy/types';
+import {
   developmentChains,
   networkConfig,
-} = require('../helper-hardhat-config');
-const { verify } = require('../utils/verify');
+  WAIT_BLOCK_CONFIRMATIONS,
+} from '../helper-hardhat-config';
+import verify from '../utils/verify';
 
 const VRF_SUB_FUND_AMOUNT = ethers.utils.parseEther('30');
 
-module.exports = async ({ getNamedAccounts, deployments }) => {
+const deployRaffle: DeployFunction = async ({
+  getNamedAccounts,
+  deployments,
+}) => {
   const { deploy, log } = deployments;
   const { deployer } = await getNamedAccounts();
   const { chainId } = network.config;
-  let vrfCoordinatorV2Address, subscriptionId;
+  let vrfCoordinatorV2Address, subscriptionId, waitConfirmations;
 
   if (developmentChains.includes(network.name)) {
+    waitConfirmations = 1;
     const vrfCoordinatorV2Mock = await ethers.getContract(
       'VRFCoordinatorV2Mock'
     );
@@ -29,12 +35,13 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
       VRF_SUB_FUND_AMOUNT
     );
   } else {
-    vrfCoordinatorV2Address = networkConfig[chainId].vrfCoordinatorV2;
-    subscriptionId = networkConfig[chainId].subscriptionId;
+    waitConfirmations = WAIT_BLOCK_CONFIRMATIONS;
+    vrfCoordinatorV2Address = networkConfig[chainId!].vrfCoordinatorV2;
+    subscriptionId = networkConfig[chainId!].subscriptionId;
   }
 
   const { entranceFee, gasLane, callbackGasLimit, interval } =
-    networkConfig[chainId];
+    networkConfig[chainId!];
 
   const args = [
     vrfCoordinatorV2Address,
@@ -49,7 +56,7 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
     from: deployer,
     args,
     log: true,
-    waitConfirmations: network.config.blockConfirmations || 1,
+    waitConfirmations,
   });
 
   log('--------------------------------------------------');
@@ -64,4 +71,5 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
   log('--------------------------------------------------');
 };
 
-module.exports.tags = ['all', 'raffle'];
+export default deployRaffle;
+deployRaffle.tags = ['all', 'raffle'];

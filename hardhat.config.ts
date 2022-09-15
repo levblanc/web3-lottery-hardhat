@@ -1,13 +1,15 @@
-require('@nomicfoundation/hardhat-toolbox');
-require('hardhat-deploy');
-require('hardhat-contract-sizer');
-require('dotenv').config();
+import '@nomicfoundation/hardhat-toolbox';
+import 'hardhat-deploy';
+import 'hardhat-contract-sizer';
+import 'dotenv/config';
+import { HardhatUserConfig } from 'hardhat/config';
 
 const { RINKEBY_RPC_URL, GOERLI_RPC_URL, PRIVATE_KEY, ETHERSCAN_API_KEY } =
   process.env;
 
 /** @type import('hardhat/config').HardhatUserConfig */
-module.exports = {
+
+const config: HardhatUserConfig = {
   solidity: {
     compilers: [{ version: '0.8.8' }, { version: '0.8.4' }],
   },
@@ -15,19 +17,16 @@ module.exports = {
   networks: {
     hardhat: {
       chainId: 31337,
-      blockConfirmations: 1,
     },
     rinkeby: {
       chainId: 4,
-      blockConfirmations: 6,
       url: RINKEBY_RPC_URL,
-      accounts: [PRIVATE_KEY],
+      accounts: [PRIVATE_KEY!],
     },
     goerli: {
       chainId: 5,
-      blockConfirmations: 6,
       url: GOERLI_RPC_URL,
-      accounts: [PRIVATE_KEY],
+      accounts: [PRIVATE_KEY!],
     },
     // localhost: {
     //   chainId: 31137,
@@ -74,3 +73,5 @@ module.exports = {
     timeout: 2000000, // ms
   },
 };
+
+export default config;
