@@ -1,4 +1,4 @@
-const { network } = require('hardhat');
+const { network, ethers } = require('hardhat');
 const { developmentChains } = require('../helper-hardhat-config');
 
 // 0.25 is the premium. It costs 0.25 LINK
