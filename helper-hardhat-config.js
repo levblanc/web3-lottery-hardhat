@@ -1,6 +1,10 @@
 const { ethers } = require('hardhat');
 
 const networkConfig = {
+  default: {
+    name: 'hardhat',
+    keepersUpdateInterval: '30',
+  },
   4: {
     name: 'rinkeby',
     vrfCoordinatorV2: '0x6168499c0cFfCaCD319c818142124B7A15E857ab',
