@@ -28,10 +28,10 @@ const config: HardhatUserConfig = {
       url: GOERLI_RPC_URL,
       accounts: [PRIVATE_KEY!],
     },
-    // localhost: {
-    //   chainId: 31137,
-    //   url: 'http://127.0.0.1:8545'
-    // }
+    localhost: {
+      chainId: 31137,
+      url: 'http://127.0.0.1:8545'
+    }
   },
   namedAccounts: {
     deployer: {
