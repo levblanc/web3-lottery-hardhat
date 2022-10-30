@@ -2,14 +2,14 @@
   "name": "web3-lottery-hardhat",
   "version": "1.0.0",
   "scripts": {
-    "deploy": "yarn hardhat deploy",
-    "deploy:goerli": "yarn hardhat deploy --network goerli",
-    "test": "yarn hardhat test",
-    "test:staging": "yarn hardhat test --network goerli",
-    "lint": "yarn solhint 'contract/*.sol'",
-    "lint:fix": "yarn solhint 'contract/*.sol' --fix",
-    "format": "yarn prettier --write .",
-    "coverage": "yarn hardhat coverage"
+    "deploy": "hardhat deploy",
+    "deploy:goerli": "hardhat deploy --network goerli",
+    "test": "hardhat test",
+    "test:staging": "hardhat test --network goerli",
+    "lint": "solhint 'contract/*.sol'",
+    "lint:fix": "solhint 'contract/*.sol' --fix",
+    "format": "prettier --write .",
+    "coverage": "hardhat coverage"
   },
   "devDependencies": {
     "@chainlink/contracts": "^0.4.1",
