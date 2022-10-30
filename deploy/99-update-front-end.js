@@ -1,4 +1,4 @@
-const { ethers } = require('hardhat');
+const { network, ethers } = require('hardhat');
 const fs = require('fs-extra');
 const path = require('path');
 
@@ -14,8 +14,8 @@ module.exports = async () => {
     console.log('>>>>>> Updating front end ...');
     const raffle = await ethers.getContract('Raffle');
 
-    updateContractAddresses(raffle);
-    updateAbi(raffle);
+    await updateContractAddresses(raffle);
+    await updateAbi(raffle);
   }
 };
 
